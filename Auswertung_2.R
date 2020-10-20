@@ -14,14 +14,14 @@ library(lmtest)#gam
 library(boot)
 library(voxel)#gamplot
 library(scales)#percent
-#library(ggpubr)
+library(ggpubr)#anotate figure
 
 ########################################################
 ################# reading in data ######################
 ########################################################
 
-general_data <- read.csv(file ="general_data_cleaned.csv", na.strings = "")
-app_data <- read.csv(file ="app_data_cleaned.csv", na.strings = "")
+general_data <- read.csv(file ="data/general_data_cleaned.csv", na.strings = "")
+app_data <- read.csv(file ="data/app_data_cleaned.csv", na.strings = "")
 data_orig <- merge(general_data, app_data, by="ID")
 
 ########################################################
@@ -100,19 +100,6 @@ text_data <- data_wo_demoday[data_wo_demoday$group == "text",]
 summary(text_data)
 
 ################################################
-################# Globals ######################
-################################################
-
-longnames <- c("Gender", "Age Group", "Place", "Group","","","","", "Preknowledge Score", "Preknowledge Level", "Exhibit Knowledge Score", "Exhibit Knowledge Level")
-
-img_size <- 20
-img_linesize <- 2
-img_textsize <- 8
-img_width <- 10
-img_height <- 7
-img_dpi <- 300
-
-################################################
 ################# Functions ####################
 ################################################
 
@@ -133,7 +120,7 @@ plot_simple <- function(data, indices, longnames, titles, legend_names, palette)
       scale_fill_brewer(name = legend_names[i], na.value="grey",
                         drop = FALSE, palette = palette[i]) +
       scale_x_discrete(drop=FALSE)
-    ggsave(paste0("dataplot_", idx, "_", longnames[idx], ".png"),
+    ggsave(paste0("plots/Survey2/dataplot_", idx, "_", longnames[idx], ".png"),
            width = img_width, height = img_height, dpi = img_dpi)
     
     #pie chart
@@ -153,7 +140,7 @@ plot_simple <- function(data, indices, longnames, titles, legend_names, palette)
       ggtitle(titles[i]) +
       scale_fill_brewer(name = legend_names[i], na.value="grey",
                         drop = FALSE, palette = palette[i])
-    ggsave(paste0("piechart_", idx, "_", longnames[idx], ".png"),
+    ggsave(paste0("plots/Survey2/piechart_", idx, "_", longnames[idx], ".png"),
            width = img_width, height = img_height, dpi = img_dpi)
   }
 }
@@ -179,7 +166,8 @@ plot_multiple <- function(data, col_names_vec, filename, legend_name, sort_vec, 
     labs(...) +
     theme(legend.text=element_text(size=rel(1))) +
     scale_fill_viridis_d(na.value="grey", name=legend_name)
-  ggsave(filename, width=img_width, height=img_height, dpi=img_dpi)
+  ggsave(paste0("plots/Survey2/", filename, ".png"),
+         width=img_width, height=img_height, dpi=img_dpi)
 }
 
 #plots two factors against each other normalizing the columns
@@ -203,7 +191,7 @@ plot_dependent_bar_fill <- function(data, i, j, legend_name, palette, ...){
       scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1), expand=c(0,0)) +
       scale_fill_brewer(palette = palette, name=legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("testplot_", i, "_", j, "_fill.png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0("plots/Survey2/testplot_", i, "_", j, "_fill.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #plots two factors against each other stacking the columns
@@ -225,7 +213,7 @@ plot_dependent_bar_stack <- function(data, i, j, legend_name, palette, ...){
       labs(...) +
       scale_fill_brewer(palette = palette, name = legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("testplot_", i, "_", j, "_stack.png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0("plots/Survey2/testplot_", i, "_", j, "_stack.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #produces a boxplot
@@ -240,14 +228,14 @@ plot_dependent_box <- function(data, i, j, palette, legend_name, ...){
     #theme(legend.position="bottom") +
     theme(legend.text=element_text(size=rel(0.9))) +
     labs(...)
-  ggsave(paste0("boxplot_", i, "_", j, ".png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0("plots/Survey2/boxplot_", i, "_", j, ".png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #returns a jitterplot which can be used as a base for other plots
 get_jitter_plot <- function(data, i, j, color_idx, palette, legendname,
                             alpha, jitter_width, jitter_height){
   return(ggplot(data, aes(x=data[,i], y=data[,j], color=data[,color_idx])) +
-           geom_jitter(alpha = alpha, cex=6, width = jitter_width, height = jitter_height) +
+           geom_jitter(alpha = alpha, cex=img_pointsize, width = jitter_width, height = jitter_height) +
            scale_color_brewer(palette = palette, name = legendname) +
            theme_classic(base_size = img_size)+
            theme(legend.text=element_text(size=rel(1))) #+ theme(legend.position="bottom")
@@ -255,18 +243,49 @@ get_jitter_plot <- function(data, i, j, color_idx, palette, legendname,
 }
 
 #plots quantile regression
-plot_regession <- function(baseplot, model, filename, ...){
+plot_regression <- function(baseplot, model, filename, ...){
   g <- baseplot + geom_line(aes(y=predict(model)), size=img_linesize) +
     labs(...) + 
     scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-  ggsave(plot = g, filename = paste0(filename, ".png"), width=img_width, height=img_height, dpi=img_dpi)
+  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+         width=img_width, height=img_height, dpi=img_dpi)
   return(g)
 }
 
+#plots multiple quantile regression models next to each other with combined title
+plot_regression_multiple <- function(model1, model2, model3, filename, title, ...){
+  plot1 <- baseplot + geom_line(aes(y=predict(model1)), size=img_linesize, show.legend = FALSE) +
+    labs(...) +
+    theme_classic(base_size = 12) +
+    theme(legend.text=element_text(size=rel(1))) +
+    scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
+  plot2 <- baseplot + geom_line(aes(y=predict(model2)), size=img_linesize, show.legend = FALSE) +
+    labs(...) +
+    theme_classic(base_size = 12) +
+    theme(legend.text=element_text(size=rel(1))) +
+    scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
+  plot3 <- baseplot + geom_line(aes(y=predict(model3)), size=img_linesize, show.legend = FALSE) +
+    labs(...) +
+    theme_classic(base_size = 12) +
+    theme(legend.text=element_text(size=rel(1))) +
+    scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
+  
+  ar <- ggarrange(plot1, plot2, plot3, common.legend = TRUE, legend = "bottom", ncol=3)
+  ar <- annotate_figure(ar, top = text_grob(title, size=15))
+  ggsave(plot = ar, filename = paste0("plots/Survey2/", filename, ".png"),
+         width=11, height=4, dpi=300)
+}
+
 #plots GAM regression with CI intervals
-plot_regession_confidence <- function(baseplot, newdata, model, filename, ...){
+plot_regression_confidence <- function(baseplot, newdata, model, filename, ...){
   prediction <- predict(model, newdata, type="link", se.fit=TRUE)
   g <- baseplot +
     geom_line(data=newdata, aes(x=newdata[,1], y=prediction$fit, color=newdata[,2]), size=img_linesize) +
@@ -281,8 +300,52 @@ plot_regession_confidence <- function(baseplot, newdata, model, filename, ...){
     scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05)) 
-  ggsave(plot = g, filename = paste0(filename, ".png"), width=img_width, height=img_height, dpi=img_dpi)
+  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+         width=img_width, height=img_height, dpi=img_dpi)
 }
+
+#plot bootstrapped GAM with num_samples_shown out of total number of samples
+plot_regression_boot <- function(baseplot, boot_model, levelnames, filename,
+                                 num_samples_total, num_samples_shown, ...){
+  g<-baseplot
+  for (i in sample(num_samples_total,num_samples_shown))
+  {
+    df <- data.frame(score_general = as.numeric(boot_model$t[i,][1:200]),
+                     group = as.factor(boot_model$t[i,][201:400]),
+                     score_object = as.numeric(boot_model$t[i,][401:600]),
+                     se = as.numeric(boot_model$t[i,][601:800]))
+    levels(df$group)<-levelnames
+    if(df$score_object == -1){ next }
+    g<-g+geom_line(data=df, aes(x=score_general, y=score_object, color=group), alpha=0.2) #+ 
+    #geom_ribbon(data=df, aes(ymin = score_object - se*2,
+    #ymax = score_object + se*2,
+    #x=df[,1],
+    #y=score_object,
+    #color=NA, fill=df[,2]),
+    #alpha=0.05) +
+    #guides(fill=FALSE, size=FALSE)
+  }
+  g<-g+labs(...) +
+    scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+    coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
+  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+         width=img_width, height=img_height, dpi=img_dpi)
+}
+
+################################################
+################# Globals ######################
+################################################
+
+longnames <- c("Gender", "Age Group", "Place", "Group","","","","", "Preknowledge Score", "Preknowledge Level", "Exhibit Knowledge Score", "Exhibit Knowledge Level")
+
+img_size <- 25
+img_linesize <- 2
+img_pointsize <- 7
+img_textsize <- 8
+img_width <- 10
+img_height <- 7
+img_dpi <- 300
 
 ##############################################
 ################# Plots ######################
@@ -307,26 +370,28 @@ x="Answers to Usability Questions"
 y="Number of Participants"
 title="Summary of all Questions regarding Usability"
 usability_data <- data_wo_demoday[data_wo_demoday$group=="app",c(5,7)]
-plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut3.png",
+plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut3",
               legend_name, c(1,2,3,4), x=x, y=y, title=title)
 usability_data <- data_wo_demoday[data_wo_demoday$group=="app",c(6,8)]
-plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut5.png",
+plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut5",
               legend_name, c(1,2,3,4,5,6), x=x, y=y, title=title)
 
 #plot dependent
 idx_a <- c(12,12,12,12,10,10,10)
 idx_b <- c(1,2,4,10,1,2,4)
 palette <- c("Paired","Oranges","Set1","RdPu","Paired","Oranges","Set1")
+#try all for visualization purposes
 for (i in 1:length(idx_a)){
   plot_dependent_bar_stack(data_wo_demoday, idx_a[i], idx_b[i], longnames[idx_b[i]],
                            x = longnames[idx_a[i]], y = "Number of Participants",
-                           title = paste0(longnames[idx_a[i]], " vs. ", longnames[idx_b[i]]),
+                           title = paste0(longnames[idx_a[i]], " by ", longnames[idx_b[i]]),
                            palette = palette[i])
   plot_dependent_bar_fill(data_wo_demoday, idx_a[i], idx_b[i], longnames[idx_b[i]],
                           x = longnames[idx_a[i]], y = "Number of Participants (norm.)",
-                          title = paste0(longnames[idx_a[i]], " vs. ", longnames[idx_b[i]]),
+                          title = paste0(longnames[idx_a[i]], " by ", longnames[idx_b[i]]),
                           palette = palette[i])
 }
+#plot single interesting one
 plot_dependent_bar_fill(data_wo_demoday, 12, 4, longnames[4],
                         x = longnames[12], y = "Number of Participants (norm.)",
                         title = "Exhibit Knowledge Level by Group",
@@ -344,21 +409,21 @@ plot_dependent_box(data = data_wo_demoday, i = 4, j = 11, palette = "Set1",
 #get age statistics
 age_ordered <- factor(data_wo_demoday$age, ordered = TRUE, levels = levels(data_wo_demoday$age))
 summary(age_ordered)
-quantile(age_ordered, 0.25)
-quantile(age_ordered, 0.5)
-quantile(age_ordered, 0.75)
-IQR(age_ordered)
+quantile(age_ordered, 0.25, type=1)
+quantile(age_ordered, 0.5, type=1)
+quantile(age_ordered, 0.75, type=1)
 
 age_ordered <- factor(text_data$age, ordered = TRUE, levels = levels(text_data$age))
 summary(age_ordered)
-quantile(age_ordered, 0.25)
-quantile(age_ordered, 0.5)
-quantile(age_ordered, 0.75)
+quantile(age_ordered, 0.25, type=1)
+quantile(age_ordered, 0.5, type=1)
+quantile(age_ordered, 0.75, type=1)
+
 age_ordered <- factor(app_data$age, ordered = TRUE, levels = levels(app_data$age))
 summary(age_ordered)
-quantile(age_ordered, 0.25)
-quantile(age_ordered, 0.5)
-quantile(age_ordered, 0.75)
+quantile(age_ordered, 0.25, type=1)
+quantile(age_ordered, 0.5, type=1)
+quantile(age_ordered, 0.75, type=1)
 
 # compare to normal distribution
 score <- table(factor(data_wo_demoday$score_object, ordered=TRUE, levels = seq(0,1,by=1/6)))
@@ -396,11 +461,11 @@ var(app_data$score_general)
 # non-parametric alternatives:
 # Wilcoxon Signed Rank Test for num-num instead of paired t-test
 # ruskal Wallis for num-factor instead of anova
+kruskal.test(data_rel$score_object~data_rel$group)
 
 wilcox.test(data_rel$score_general,data_rel$score_object,paired=TRUE)
 cor.test(data_rel$score_general,data_rel$score_object, method="spearman")
 cor.test(data_rel$score_general,data_rel$score_object, method="kendall")
-kruskal.test(data_rel$score_object~data_rel$group)
 chisq.test(table(data_wo_demoday$level_object, data_rel$group))
 chisq.test(table(data_rel$score_object, data_rel$group))
 chisq.test(table(data_wo_demoday$level_general, data_rel$group))
@@ -411,15 +476,18 @@ chisq.test(table(data_rel$score_general, data_rel$group))
 ########################################################
 
 # generate base plots for regression
-baseplot <- get_jitter_plot(data=data_rel, i=3, j=1, color_idx=3,
+
+# baseplot_horizontal <- get_jitter_plot(data=data_rel, i=3, j=1, color_idx=3,
+#                             palette="Set1", legendname=paste0(longnames[4],":"),
+#                             alpha=1, jitter_width = 0.2, jitter_height = 0.1)
+# baseplot_horizontal
+baseplot <- get_jitter_plot(data=data_rel, i=2, j=1, color_idx=3,
                             palette="Set1", legendname=paste0(longnames[4],":"),
-                            alpha=1, jitter_width = 0.2, jitter_height = 0.1)
-baseplot2 <- get_jitter_plot(data=data_rel, i=2, j=1, color_idx=3,
-                             palette="Set1", legendname=paste0(longnames[4],":"),
-                             alpha=1, jitter_width = 0.05, jitter_height = 0.05)
-baseplot2
+                            alpha=1, jitter_width = 0.05, jitter_height = 0.05)
+baseplot
 
 # Quantile Regression
+#jitter data to avoid errors due to discretization
 data_rel$score_object <- jitter(data_rel$score_object, factor=0.000001)
 data_rel$score_general <- jitter(data_rel$score_general, factor=0.000001)
 
@@ -437,43 +505,22 @@ for (i in c(0.25, 0.5, 0.75))
     {
       pv <- "< 2.2e-16"
     }
-    plot_regession(baseplot2, model, paste0("quant_reg_",i),
-                   x=longnames[5], y=longnames[7],
-                   title=paste0("Quantile Regression at ", i*100, "th Percentile"),
-                   subtitle=paste0("p-value: ", pv))
+    plot_regression(baseplot, model, paste0("quant_reg_",i),
+                    x=longnames[5], y=longnames[7],
+                    title=paste0("Quantile Regression at ", i*100, "th Percentile"),
+                    subtitle=paste0("p-value: ", pv))
   #}
 }
 
+#plot 3 percentiles in one image
 model1 <- rq(score_object ~ group + score_general, data = data_rel, tau=0.25)
 model2 <- rq(score_object ~ group + score_general, data = data_rel, tau=0.5)
 model3 <- rq(score_object ~ group + score_general, data = data_rel, tau=0.75)
+plot_regression_multiple(model1, model2, model3,
+                         "quant", "Quantile Regression at 25th, 50th and 75th Percentile",
+                         x=longnames[9], y=longnames[11])
 
-plot1 <- baseplot2 + geom_line(aes(y=predict(model1)), size=1, show.legend = FALSE) +
-  labs(x=longnames[9], y=longnames[11]) +
-  theme_classic(base_size = 12) +
-  theme(legend.text=element_text(size=rel(1))) +
-  scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-plot2 <- baseplot2 + geom_line(aes(y=predict(model2)), size=1, show.legend = FALSE) +
-  labs(x=longnames[9], y=longnames[11]) +
-  theme_classic(base_size = 12) +
-  theme(legend.text=element_text(size=rel(1))) +
-  scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-plot3 <- baseplot2 + geom_line(aes(y=predict(model3)), size=1, show.legend = FALSE) +
-  labs(x=longnames[9], y=longnames[11]) +
-  theme_classic(base_size = 12) +
-  theme(legend.text=element_text(size=rel(1))) +
-  scale_y_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-
-ar <- ggarrange(plot1, plot2, plot3, common.legend = TRUE, legend = "bottom", ncol=3)
-ar <- annotate_figure(ar, top = text_grob("Quantile Regression at 25th, 50th and 75th Percentile", size=15))
-ggsave(plot = ar, filename = "quant.png", width=11, height=4, dpi=300)
-
+#reset data
 data_rel <- data_wo_demoday[,c("score_object", "score_general", "group")]
 
 #Generalized additive models
@@ -484,10 +531,13 @@ gam_model_null <- gam(score_object ~ 1, data = data_rel)
 anova(gam_model, gam_model_null)
 test<-lrtest(gam_model, gam_model_null)
 test
-#plot_regession(baseplot2, gam_model, "gam_reg", x=longnames[4], y=longnames[7], title="GAM with p-value of 0.00288")
+#plot non-smooth
+plot_regression(baseplot, gam_model, "gam_reg", x=longnames[4], y=longnames[7], title="GAM with p-value of 0.0028")
+#plot with CIs
 newdata <- with(data_rel, data.frame(score_general = seq(from=0, to=1, length=200), group = levels(factor(data_rel$group))))
-plot_regession_confidence(baseplot2, newdata, gam_model, "gam_reg", x=longnames[9], y=longnames[11], title="Generalized Additive Model")#, subtitle=paste0("p-value: ", round(test$`Pr(>Chisq)`[2],5)))
+plot_regression_confidence(baseplot, newdata, gam_model, "gam_reg_CI", x=longnames[9], y=longnames[11], title="Generalized Additive Model")#, subtitle=paste0("p-value: ", round(test$`Pr(>Chisq)`[2],5)))
 
+#plot using library
 #plotGAM(gam_model, smooth.cov="score_general", groupCovs = "group")
 
 ###########################################################
@@ -529,87 +579,74 @@ bs_quant <- function(data, indices, formula){
 }
 
 set.seed(12347)
+num_samples <- 1500
 
-boot_stat <- boot(data=data_rel, statistic=bs_stat, R=1500, formula=score_object ~ group)
+boot_stat <- boot(data=data_rel, statistic=bs_stat, R=num_samples, formula=score_object ~ group)
 boot_stat
 colMeans(boot_stat$t)
 apply(boot_stat$t, 2, median)
 boot.ci(boot_stat, index = 3)
 plot(boot_stat, index = 1)
 
-boot_stat <- boot(data=data_rel, statistic=bs_stat, R=1500, formula=score_general ~ group)
+boot_stat <- boot(data=data_rel, statistic=bs_stat, R=num_samples, formula=score_general ~ group)
 boot_stat
 colMeans(boot_stat$t)
 plot(boot_stat, index = 4)
 boot.ci(boot_stat, index = 1)
 
-boot_cor <- boot(data=data_rel, statistic=bs_cor, R=1500)
+boot_cor <- boot(data=data_rel, statistic=bs_cor, R=num_samples)
 boot_cor
 mean(boot_cor$t)
 plot(boot_cor)
 boot.ci(boot_cor)
 
-boot_test <- boot(data=data_rel, statistic=bs_test, R=1500)
+boot_test <- boot(data=data_rel, statistic=bs_test, R=num_samples)
 boot_test
 test_res <- colMeans(boot_test$t)
 pchisq(test_res[1], df=test_res[2], lower.tail=FALSE)
 
-boot_gam <- boot(data=data_rel, statistic=bs_gam, R=1500, formula=score_object ~ group + s(score_general, k=6, bs="ps"))
-g<-baseplot2
-for (i in sample(1500,400))
-{
-  df <- data.frame(score_general = as.numeric(boot_gam$t[i,][1:200]), group = as.factor(boot_gam$t[i,][201:400]), score_object = as.numeric(boot_gam$t[i,][401:600]), se = as.numeric(boot_gam$t[i,][601:800]))
-  levels(df$group)<-levels(factor(data_rel$group))
-  if(df$score_object == -1){ next }
-  g<-g+geom_line(data=df, aes(x=score_general, y=score_object, color=group), alpha=0.2) #+ 
-    #geom_ribbon(data=df, aes(ymin = score_object - se*2,
-                                  #ymax = score_object + se*2,
-                                  #x=df[,1],
-                                  #y=score_object,
-                                  #color=NA, fill=df[,2]),
-                                  #alpha=0.05) +
-    #guides(fill=FALSE, size=FALSE)
-}
-g<-g+labs(x=longnames[9], y=longnames[11], title="Bootstrapped GAM") +
-  scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-g
-ggsave(plot = g, filename = "gam_boot.png", width=10, height=10, dpi=300)
+boot_gam <- boot(data=data_rel, statistic=bs_gam, R=num_samples, formula=score_object ~ group + s(score_general, k=6, bs="ps"))
+plot_regression_boot(baseplot, boot_gam, levels(factor(data_rel$group)), "gam_boot",
+                     num_samples, 400,
+                     x=longnames[9], y=longnames[11], title="Bootstrapped GAM")
 
-boot_gam_rel <- boot_gam$t[boot_gam$t[,401] != -1,]
-boot_gam_rel[boot_gam_rel == "app"] <- 1
-boot_gam_rel[boot_gam_rel == "text"] <- 2
-class(boot_gam_rel) <- "numeric"
-boot_gam_mean <- colMeans(boot_gam_rel)
-df <- data.frame(score_general = boot_gam_mean[1:200], group = as.factor(boot_gam_mean[201:400]), score_object = boot_gam_mean[401:600], se= boot_gam_mean[601:800])
-levels(df$group)<-levels(data_rel$group)
-g <- baseplot2 +
-  geom_line(data=df, aes(x=score_general, y=score_object, color=group), size=3) +
-  geom_ribbon(data=df, aes(ymin = score_object - se*2,
-                                ymax = score_object + se*2,
-                                x=score_general,
-                                y=score_object,
-                                color=NA, fill=group),
-              alpha=0.25) +
-  guides(fill=FALSE, size=FALSE) +
-  labs(x=longnames[5], y=longnames[7], title="Bootstrapped GAM", subtitle = "Averaged prediction with 95% CI") + 
-  scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-ggsave(plot = g, filename = "gam_boot_mean.png", width=10, height=10, dpi=300)
+#plot bootstrapped gam with CIs
 
-boot_quant <- boot(data=data_rel, statistic=bs_quant, R=1500, formula=score_object ~ group + score_general)
-g<-baseplot2
-for (i in sample(1500,300))
-{
-  df <- data.frame(score_general = boot_quant$t[i,][1:4], group = as.factor(boot_quant$t[i,][5:8]), score_object = boot_quant$t[i,][9:12])
-  levels(df$group)<-levels(data_rel$group)
-  g<-g+geom_line(data=df, aes(x=score_general, y=score_object, color=group), alpha=0.2)
-}
-g<-g+labs(x=longnames[5], y=longnames[7], title="Bootstrapped Quantile Regression", subtitle="300 out of 1500 samples") +
-  scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
-  coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05)) 
-ggsave(plot = g, filename = "quant_boot.png", width=10, height=10, dpi=300)
-g
+# boot_gam_rel <- boot_gam$t[boot_gam$t[,401] != -1,]
+# boot_gam_rel[boot_gam_rel == "app"] <- 1
+# boot_gam_rel[boot_gam_rel == "text"] <- 2
+# class(boot_gam_rel) <- "numeric"
+# boot_gam_mean <- colMeans(boot_gam_rel)
+# df <- data.frame(score_general = boot_gam_mean[1:200], group = as.factor(boot_gam_mean[201:400]), score_object = boot_gam_mean[401:600], se= boot_gam_mean[601:800])
+# levels(df$group)<-levels(data_rel$group)
+# g <- baseplot2 +
+#   geom_line(data=df, aes(x=score_general, y=score_object, color=group), size=3) +
+#   geom_ribbon(data=df, aes(ymin = score_object - se*2,
+#                                 ymax = score_object + se*2,
+#                                 x=score_general,
+#                                 y=score_object,
+#                                 color=NA, fill=group),
+#               alpha=0.25) +
+#   guides(fill=FALSE, size=FALSE) +
+#   labs(x=longnames[5], y=longnames[7], title="Bootstrapped GAM", subtitle = "Averaged prediction with 95% CI") + 
+#   scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+#   scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+#   coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
+# ggsave(plot = g, filename = "gam_boot_mean.png", width=10, height=10, dpi=300)
+
+#bootstrap quantile regression 
+
+# boot_quant <- boot(data=data_rel, statistic=bs_quant, R=1500, formula=score_object ~ group + score_general)
+# g<-baseplot2
+# for (i in sample(1500,300))
+# {
+#   df <- data.frame(score_general = boot_quant$t[i,][1:4], group = as.factor(boot_quant$t[i,][5:8]), score_object = boot_quant$t[i,][9:12])
+#   levels(df$group)<-levels(data_rel$group)
+#   g<-g+geom_line(data=df, aes(x=score_general, y=score_object, color=group), alpha=0.2)
+# }
+# g<-g+labs(x=longnames[5], y=longnames[7], title="Bootstrapped Quantile Regression", subtitle="300 out of 1500 samples") +
+#   scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+#   scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+#   coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05)) 
+# ggsave(plot = g, filename = "quant_boot.png", width=10, height=10, dpi=300)
+# g
