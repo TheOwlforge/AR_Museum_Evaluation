@@ -1,13 +1,7 @@
 # Folders
 /plots_interesting/*
 /plots_unimportant/*
-
-# Output files
-*.png
-*.pdf
-*.odt
-*.bib
-*.Rmd
+/documents/*
 
 # R stuff
 # History files
