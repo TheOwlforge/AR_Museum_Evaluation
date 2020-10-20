@@ -1,0 +1,43 @@
+a1,a2,a3,a4,a5,w1,w2,w3,w4,w5,w6,w7,w8,w9,i1,i2,i3,i4,i5,b1,b2,b3,b4,b5,b6,group
+36-45,female,yes,4,3,1,1,5,3,3,5,Leisten,"Ehefrau, Tochter",Xanthippos,5,5,5,NA,kt,1,3,5,5,5,1,g1
+46-55,female,yes,4,1,3,1,4,1,5,2,Fuß,NA,NA,5,5,5,5,i,1,3,5,5,3,2,g1
+25-35,male,yes,4,2,4,4,5,5,3,5,Leisten,"junge Frau, Tochter",Xanthippos,5,4,5,4,k,2,4,5,4,4,2,g1
+21-25,male,yes,4,2,1,1,3,5,NA,5,Fuß,Diener,Xanthippos,5,2,5,NA,k,1,3,5,4,3,2,g1
+25-35,female,yes,4,3,5,5,4,4,4,1,"Schuh, Leisten",Töchter,"Xanthippos, blondes Pferd",5,5,5,4,ti,1,4,5,5,3,1,g1
+46-55,male,NA,4,4,2,NA,NA,NA,NA,NA,NA,NA,NA,5,5,5,5,NA,NA,NA,NA,NA,NA,NA,g1
+46-55,male,watched,1,4,1,5,5,5,5,5,Fuß,NA,NA,5,3,3,3,t,3,3,3,3,3,3,g1
+66+,female,yes,3,4,5,1,2,3,1,5,Schuh,Diener,NA,3,2,2,3,i,3,3,5,5,3,2,g1
+16-20,female,yes,4,3,3,5,4,5,5,5,"Fuß, Leisten","Ehefrau, Tochter",Xanthippos,4,3,5,5,i,1,4,5,4,5,1,g1
+16-20,female,yes,4,3,4,1,5,4,5,NA,Schuh,"Chiton, Tochter",Xanthippos,5,5,5,5,ki,1,5,5,5,5,1,g1
+46-55,male,yes,4,3,3,3,3,3,3,5,Fuß,Familienmitglieder,Xanthippos,4,4,2,2,t,3,3,3,3,3,3,g1
+56-65,male,watched,4,2,4,4,NA,4,4,2,Schuh,"Frau, Diener",Xanthippos,4,4,5,NA,i,2,4,4,4,3,1,g1
+66+,female,NA,4,3,NA,NA,NA,NA,NA,NA,Schuh,"Diener, Tochter",NA,5,4,5,5,NA,2,3,3,NA,NA,NA,g1
+56-65,male,watched,4,4,3,2,5,4,4,4,Schuh,NA,Xanthippos,5,5,5,5,t,1,4,5,5,5,1,g1
+36-45,male,yes,4,3,1,1,1,NA,1,5,Schuh,Töchter,Xanthippos,5,5,4,4,k,1,NA,5,5,3,2,g1
+46-55,female,yes,4,2,5,1,4,3,4,3,Schuh,Töchter,NA,4,4,5,4,k,1,NA,1,4,3,3,g1
+46-55,male,yes,4,2,3,1,5,5,5,4,Leisten,Hinterbliebene,Xanthippos,5,5,5,5,i,1,5,5,5,5,3,g1
+56-65,female,yes,3,2,5,1,3,3,5,2,Fuß,Töchter,NA,5,5,5,3,t,1,3,5,5,3,3,g1
+56-65,female,yes,4,2,1,1,5,4,NA,5,Leisten,"Ehefrau, Tochter",Xanthippos,5,5,5,5,NA,1,5,5,5,4,1,g1
+25-35,male,yes,4,2,5,2,4,5,1,1,Schuh,NA,NA,5,5,5,5,t,1,4,5,5,5,3,g2
+16-20,male,yes,4,3,1,1,3,4,5,4,Schuh,Töchter,Xanthippos,4,4,5,4,t,1,3,4,4,4,2,g2
+56-65,female,watched,4,2,1,5,5,3,5,5,Schuh,Töchter,Xanthippos,5,5,5,NA,kt,1,5,5,5,3,3,g2
+21-25,female,yes,4,3,1,5,4,5,5,1,Fuß,Töchter,Xanthippos,5,4,5,4,k,1,5,5,5,5,1,g2
+25-35,male,yes,4,3,5,5,5,5,5,4,Leisten,Töchter,Xanthippos,5,5,4,5,kti,1,4,4,4,5,5,g2
+46-55,female,yes,3,2,5,5,5,5,1,5,Leisten,"junge Frau, Tochter",Xanthippos,5,5,5,4,ti,1,5,4,4,3,3,g2
+36-45,female,no,4,3,3,3,3,3,5,3,Leisten,Töchter,Xanthippos,5,4,5,5,kt,NA,NA,NA,NA,NA,NA,g2
+25-35,diverse,yes,4,3,1,5,4,5,5,3,Fuß,Menschen,Xanthippos,5,5,5,5,k,1,5,5,5,5,1,g2
+46-55,male,NA,2,2,5,5,5,5,5,5,Leisten,"trauernde Angehörige, Töchter",Xanthippos,5,4,5,NA,t,NA,NA,NA,NA,NA,NA,g2
+21-25,male,yes,1,2,3,5,3,5,5,4,Fuß,Diener,NA,4,5,5,5,t,1,5,5,5,5,1,g2
+21-25,female,yes,4,1,5,5,4,5,5,5,Schuh,heiratsfähige Frau,Xanthippos,5,5,5,5,i,3,4,4,4,4,4,g2
+46-55,female,yes,3,3,5,5,5,5,5,5,Leisten,Tochter,"Xanthippos, blondes Pferd",4,4,5,5,NA,1,5,5,4,3,2,g2
+25-35,male,yes,4,3,1,2,5,3,3,5,Schuh,"Ehefrau, Tochter",Xanthippos,5,5,5,5,ki,1,5,5,5,3,2,g2
+16-20,female,yes,4,4,1,3,3,3,4,2,Fuß,Schüler,Xanthippos,5,5,5,NA,kt,1,4,5,5,5,2,g2
+21-25,female,watched,4,2,1,1,4,3,5,2,Schuh,Töchter,NA,4,5,5,3,k,1,3,5,5,5,1,g2
+16-20,female,no,4,1,1,3,5,5,4,3,Fuß,"Töchter, Schüler",Xanthippos,5,5,5,3,i,NA,NA,NA,NA,NA,NA,g2
+46-55,female,watched,4,2,1,1,4,NA,NA,1,Schuh,NA,NA,5,5,5,5,NA,NA,NA,NA,NA,NA,NA,g2
+46-55,male,watched,4,3,1,1,1,NA,5,3,Schuh,NA,NA,5,5,5,5,t,1,NA,5,5,NA,NA,g2
+25-35,male,yes,4,2,2,2,2,4,1,2,Schuh,NA,Xanthippos,4,3,4,4,t,1,3,4,4,3,2,g2
+56-65,female,yes,4,1,5,4,5,5,5,2,Schuh,Tochter,NA,5,5,5,5,NA,1,5,5,5,4,1,g2
+25-35,NA,yes,4,2,1,1,4,3,5,2,Schuh,Töchter,NA,5,5,5,5,NA,1,3,5,5,5,1,g2
+56-65,female,yes,3,2,5,5,3,5,1,3,Leisten,NA,NA,5,5,5,5,ti,1,5,5,5,4,1,g2
+16-20,female,yes,3,3,NA,NA,NA,NA,NA,NA,Fuß,Töchter,Xanthippos,3,2,1,2,k,1,4,5,4,4,3,g3

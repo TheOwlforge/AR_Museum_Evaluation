@@ -1,0 +1,75 @@
+aggregate(score_object ~ group, data_rel, mean)
+  group score_object
+1   app    0.4727273
+2  text    0.2600000
+
+> aggregate(score_object ~ group, data_rel, median)
+  group score_object
+1   app          0.4
+2  text          0.2
+
+> aggregate(score_general ~ group, data_rel, mean)
+  group score_general
+1   app     0.5000000
+2  text     0.5333333
+
+> aggregate(score_general ~ group, data_rel, median)
+  group score_general
+1   app           0.5
+2  text           0.5
+
+
+	Kruskal-Wallis rank sum test
+
+data:  data_rel$score_object by data_rel$group
+Kruskal-Wallis chi-squared = 3.0992, df = 1, p-value = 0.07833
+
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = data_rel, statistic = bs_stat, R = 1500, formula = score_object ~ 
+    group)
+
+
+Bootstrap Statistics :
+     original       bias    std. error
+t1* 0.4727273 -0.002150219  0.08433468
+t2* 0.2600000 -0.003765203  0.10071253
+t3* 0.4000000  0.064533333  0.11456089
+t4* 0.2000000 -0.034533333  0.12068067
+> colMeans(boot_stat$t)
+[1] 0.4705771 0.2562348 0.4645333 0.1654667
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = data_rel, statistic = bs_stat, R = 1500, formula = score_general ~ 
+    group)
+
+
+Bootstrap Statistics :
+     original       bias    std. error
+t1* 0.5000000  0.002461908   0.1374322
+t2* 0.5333333 -0.001618129   0.1267375
+t3* 0.5000000  0.006055556   0.3129547
+t4* 0.5000000  0.037166667   0.2349801
+> colMeans(boot_stat$t)
+[1] 0.5024619 0.5317152 0.5060556 0.5371667
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = data_rel, statistic = bs_test, R = 1500)
+
+
+Bootstrap Statistics :
+    original    bias    std. error
+t1* 3.099207 0.7656093    3.154247
+t2* 1.000000 0.0000000    0.000000
+> test_res <- colMeans(boot_test$t)
+> pchisq(test_res[1], df=test_res[2], lower.tail=FALSE)
+[1] 0.04930859
