@@ -16,7 +16,7 @@ library(scales)#percent
 #nr 38 deleted, too less answeres, only 4/27
 #last two feedback questions deleted
 #categoriezed history questions
-data_orig <- read.csv(file ="~/Documents/Studium/Projects/ARPraktikum/Umfrage/data_cleaned.csv", 
+data_orig <- read.csv(file ="data/data_cleaned.csv", 
                       na.strings = "NA")
 
 ################# data wrangling  ######################
