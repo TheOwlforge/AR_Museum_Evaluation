@@ -328,11 +328,11 @@ longnames <- c("Age Group", "Gender", "App Usage", "Mobile Device Usage", "Drawi
                "Number of correct or better answers",
                "Integration Score", "Usability Score", "Knowledge Score")
 
-img_size <- 25
+img_size <- 20
 img_linesize <- 2
 img_pointsize <- 7
 img_textsize <- 8
-img_width <- 10
+img_width <- 12
 img_height <- 7
 img_dpi <- 300
 img_path <- "plots/Survey1/"
@@ -489,17 +489,17 @@ plot_dependent_box(data1=data_cut5, data2=data_cut5, i=4, j=36, legend_name=long
                    subtitle="Spearman's rho: -0.378, p-value: 0.0162")
 
 #plot interesting ones again in nice
-plot_dependent_bar_stack(data_cut5, 6, 33, "Correct Answers\nCount",
+plot_dependent_bar_fill(data_cut5, 6, 33, "Correct Answers\nCount",
                          x = longnames[6], y = "Number of Participants",
                          title = "Relation between using the Infoscreen\nand the number of correct or better answers",
                          subtitle = "correlat.: 0.11, p-value: 0.09225, not significant",
                          palette = "RdPu")
-plot_dependent_bar_stack(data_cut5, 7, 33, "Correct Answers\nCount",
+plot_dependent_bar_fill(data_cut5, 7, 33, "Correct Answers\nCount",
                          x = longnames[7], y = "Number of Participants",
                          title = "Relation between reading the Panel\nand the number of correct or better answers",
                          subtitle = "correlat.: 0.32, p-value: 0.01338, significant",
                          palette = "RdPu")
-plot_dependent_bar_stack(data_cut5, 11, 33, "Correct Answers\nCount",
+plot_dependent_bar_fill(data_cut5, 11, 33, "Correct Answers\nCount",
                          x = longnames[11], y = "Number of Participants",
                          title = "Relation between prior knowledge\nand the number of correct or better answers",
                          subtitle = "Kendall-Correlation Coefficient: 0.36",
