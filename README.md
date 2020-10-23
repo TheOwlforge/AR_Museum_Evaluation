@@ -2,12 +2,13 @@
 ## Evaluation of an Interactive Painting Application
 
 This repository contains R code used to evaluate an [interactive museum application](https://github.com/timkaiser/Paintique), as well as the applied surveys and the data gathered during the evaluation.
-The analysis features Quantile Regression and Generalized Additive Models, as well as Bootstrapping next to traditional statistical testing.
+The analysis features Quantile Regression and Generalized Additive Models, as well as Bootstrapping next to traditional statistical testing. Most plots were produced using the library ggplot2.
 
-Some featured results (more can be found in the plots folder):
+## Featured results 
+(more can be found in the plots folder)
 
 <p align="center">
-  <img src="plots/Survey2/quant.png" width="800" title="Quantile Regression">
+  <img src="plots/Survey1/dataplot_usability_questions_cut5.png" width="800" title="Usability">
 </p>
 <p align="center">
   <img src="plots/Survey2/gam_reg_CI.png" width="400" title="GAM">
