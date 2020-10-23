@@ -384,11 +384,11 @@ y="Number of Participants"
 title="Summary of all Questions regarding Integration"
 
 integration_data <- data_cut3[,(15:18)]
-plot_multiple(data = integration_data, col_names_vec, "dataplot_integration_questions_cut3.png",
+plot_multiple(data = integration_data, col_names_vec, "dataplot_integration_questions_cut3",
               legend_name, c(1,2,3,4,5), x=x, y=y, title=title)
 
 integration_data <- data_cut5[,(15:18)]
-plot_multiple(data = integration_data, col_names_vec, "dataplot_integration_questions_cut5.png",
+plot_multiple(data = integration_data, col_names_vec, "dataplot_integration_questions_cut5",
               legend_name, c(1,4,2,5,3,6,7), x=x, y=y, title=title)
 
 #plot usability questions
@@ -399,11 +399,11 @@ y="Number of Participants"
 title="Summary of all Questions regarding Usability"
 
 usability_data <- data_cut3[,(20:25)]
-plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut3.png",
+plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut3",
               legend_name, c(4,1,3,2,5), x=x, y=y, title=title)
 
 usability_data <- data_cut5[,(20:25)]
-plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut5.png",
+plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_questions_cut5",
               legend_name, c(1,4,3,5,2,6,7), x=x, y=y, title=title)
 
 #plot historic questions
@@ -411,7 +411,7 @@ legend_name = "Question\nCorrectness"
 x="Answers to Historic Questions"
 y="Number of Participants"
 title="Summary of all Historic Questions"
-plot_multiple(data = data_orig[,(30:32)], longnames[12:14], "dataplot_historic_questions.png",
+plot_multiple(data = data_orig[,(30:32)], longnames[12:14], "dataplot_historic_questions",
               legend_name, c(3,1,2,4,5), x=x, y=y, title=title)
 
 #plot knowledge related questions
@@ -422,11 +422,11 @@ y="Number of Participants"
 title="Summary of all Questions regarding Knowledge Transfer"
 
 knowledge_data <- data_cut3[,(6:11)]
-plot_multiple(data = knowledge_data, col_names_vec, "dataplot_knowledge_questions_cut3.png",
+plot_multiple(data = knowledge_data, col_names_vec, "dataplot_knowledge_questions_cut3",
               legend_name, c(1,2,3,4,5), x=x, y=y, title=title)
 
 knowledge_data <- data_cut5[,(6:11)]
-plot_multiple(data = knowledge_data, col_names_vec, "dataplot_knowledge_questions_cut5.png",
+plot_multiple(data = knowledge_data, col_names_vec, "dataplot_knowledge_questions_cut5",
               legend_name, c(1,2,3,4,5,6,7), x=x, y=y, title=title)
 
 ################# find dependencies ####################
