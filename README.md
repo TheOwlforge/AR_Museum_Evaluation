@@ -18,13 +18,16 @@ The analysis features Quantile Regression and Generalized Additive Models, as we
 </p>
 
 ### User Study on the Prototype
-<p align="center">
-  <img src="plots/Survey1/dataplot_1_Age Group.png" width="300" title="Age Distribution">
-  <img src="plots/Survey1/dataplot_usability_questions_cut5.png" width="500" title="Usability Questions">
-</p>
+
 <p align="center">
   <img src="plots/Survey1/piechart_5_Drawing Frequency.png" width="400" title="Drawing Frequency">
   <img src="plots/Survey1/testplot_5_17_fill.png" width="400" title="Drawing Frequency vs. Would use again">
+</p>
+<p align="center">
+  <img src="plots/Survey1/dataplot_1_Age Group.png" width="400" title="Age Distribution">
+</p>
+<p align="center">
+  <img src="plots/Survey1/dataplot_usability_questions_cut5.png" width="500" title="Usability Questions">
 </p>
 <p align="center">
   <img src="plots/Survey1/corrplot.png" width="400" title="Correlation Matrix">
