@@ -1,3 +1,9 @@
+print(aspect_data)
+       aspect aspect_count
+1    artistic           15
+2   technical           18
+3 informative           13
+
 Integration:
 
   negative rather_negative neutral rather_positive positive NA.     col_names_vec

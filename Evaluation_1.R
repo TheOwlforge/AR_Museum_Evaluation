@@ -10,7 +10,10 @@ library(nnet) #multinom
 library(RColorBrewer) #more color scales
 library(scales)#percent
 
+########################################################
 ################# reading in data ######################
+########################################################
+
 #anglisized
 #usability answers deleted with app usage no
 #nr 38 deleted, too less answeres, only 4/27
@@ -19,19 +22,10 @@ library(scales)#percent
 data_orig <- read.csv(file ="data/data_cleaned.csv", 
                       na.strings = "NA")
 
+########################################################
 ################# data wrangling  ######################
-longnames <- c("Age Group", "Gender", "App Usage", "Mobile Device Usage", "Drawing Frequency",
-               "Used\nInfoscreen", "Read\nObject Panel", "Motivation",
-               "Text Length\nAppropriateness", "Noticed\nHighlights", "Background\nKnowledge",
-               "Last Question", "Daughter Question", "Name Question",
-               "Enhancment", "Integration", "Would Use Again",
-               "Request for more Digital Apps", "Aspect Combination",
-               "General Difficulty", "Help Usefull", "Color Selection Difficulty",
-               "Drawing Process Difficulty", "Artistic Freedom", "Creativity", "Group",
-               "Technical Aspect", "Artistic Aspect", "Informative Aspect",
-               "Answer Correctness", "Answer Correctness", "Answer Correctness",
-               "Number of correct or better answers",
-               "Integration Score", "Usability Score", "Knowledge Score")
+########################################################
+
 #reorder gender
 data_orig$a2 <- factor(data_orig$a2, levels=c("female", "male", "diverse"))
 data_orig$a1 <- as.factor(data_orig$a1)
@@ -165,25 +159,70 @@ summary(data_cut5)
 age_ordered <- factor(data_cut5$a1, ordered = TRUE, levels = levels(data_cut5$a1))
 summary(age_ordered)
 mode(age_ordered)
-quantile(age_ordered, 0.25)
-quantile(age_ordered, 0.5)
-quantile(age_ordered, 0.75)
+quantile(age_ordered, 0.25, type=1)
+quantile(age_ordered, 0.5, type=1)
+quantile(age_ordered, 0.75, type=1)
 IQR(age_ordered)
 
 #extract count of votes per aspect
-aspect_a = table(data_orig$aspect_a)["TRUE"]
-aspect_t = table(data_orig$aspect_t)["TRUE"]
-aspect_i = table(data_orig$aspect_i)["TRUE"]
+aspect_a <- table(data_orig$aspect_a)["TRUE"]
+aspect_t <- table(data_orig$aspect_t)["TRUE"]
+aspect_i <- table(data_orig$aspect_i)["TRUE"]
 aspect_data <- data.frame(
   aspect = factor(c("artistic","technical", "informative"),
                   levels=c("artistic","technical", "informative")),
   aspect_count = c(aspect_a, aspect_t, aspect_i)
 )
 summary(aspect_data)
+print(aspect_data)
 
-################# functions ####################
+################################################
+################# Functions ####################
+################################################
 
-#plots multiple factors with seperate side by side bars per level
+#plot a multiple factors as separate barplot and piechart
+plot_simple <- function(data, indices, longnames, titles, legend_names, palette) {
+  for (i in seq(length(indices))) {
+    idx <- indices[i]
+    #barplot
+    ggplot(data, aes(x=data[,idx], fill = data[,idx])) +
+      scale_y_continuous(expand = c(0,0), limits = c(0, range(table(data[,idx]))[2]+1)) +
+      geom_bar() +
+      geom_bar(color="black", show.legend = FALSE) +
+      theme_classic(base_size = img_size) +
+      theme(legend.text=element_text(size=rel(1))) +
+      xlab(longnames[idx]) +
+      ylab("Number of Participants") +
+      ggtitle(titles[i]) +
+      scale_fill_brewer(name = legend_names[i], na.value="grey",
+                        drop = FALSE, palette = palette[i]) +
+      scale_x_discrete(drop=FALSE)
+    ggsave(paste0(img_path, "dataplot_", idx, "_", longnames[idx], ".png"),
+           width = img_width, height = img_height, dpi = img_dpi)
+    
+    #pie chart
+    df<-data.frame(table(data[,idx]))
+    df <- df %>%  mutate(prop = Freq / sum(Freq) * 100)
+    df <- df %>%  mutate(prop_perc = percent(prop/100, 1))
+    df <- df %>%  arrange(desc(Var1)) %>% mutate(ypos = cumsum(prop) - 0.5*prop)
+    df <- df %>%  mutate(al = ifelse(prop == 0, 0, 1))
+    ggplot(df, aes(x="",y=prop,fill=Var1)) +
+      geom_bar(width = 1, stat="identity", color = "white", size = 3) +
+      coord_polar("y", start=0) +
+      theme_void(base_size = img_size) +
+      theme(legend.text=element_text(size=rel(1))) +
+      geom_text(aes(y = ypos, label = prop_perc), color = "black", size = img_textsize) +
+      xlab(longnames[idx]) +
+      ylab("Number of Participants") +
+      ggtitle(titles[i]) +
+      scale_fill_brewer(name = legend_names[i], na.value="grey",
+                        drop = FALSE, palette = palette[i])
+    ggsave(paste0(img_path, "piechart_", idx, "_", longnames[idx], ".png"),
+           width = img_width, height = img_height, dpi = img_dpi)
+  }
+}
+
+#plots multiple factors in one plot with separate side by side bars per level
 plot_multiple <- function(data, col_names_vec, filename, legend_name, sort_vec, ...) {
   # get data as table
   data_table <- table(col(data), as.matrix(data), exclude=NULL)
@@ -200,78 +239,46 @@ plot_multiple <- function(data, col_names_vec, filename, legend_name, sort_vec, 
     scale_y_continuous(expand = c(0,0), limits = c(0, range(data_table)[2]+1)) +
     geom_bar(aes(fill = variable), position = "dodge", stat="identity") +
     geom_bar(aes(fill = variable), position = "dodge", stat="identity", color="black", show.legend = FALSE) +
-    theme_classic(base_size=25) +
+    theme_classic(base_size=img_size) +
     labs(...) +
-    theme(legend.text=element_text(size=rel(1)), legend.position="bottom") +
+    theme(legend.text=element_text(size=rel(1))) +
     scale_fill_viridis_d(na.value="grey", name=legend_name)
-  ggsave(filename, width=15, height=9, dpi=300)
+  ggsave(paste0(img_path, filename, ".png"),
+         width=img_width, height=img_height, dpi=img_dpi)
 }
 
-plot_simple <- function(data, indices, longnames, titles, legend_names, palette) {
-  for (i in seq(length(indices))) {
-    idx <- indices[i]
-    ggplot(data, aes(x=data[,idx], fill = data[,idx])) +
-      scale_y_continuous(expand = c(0,0), limits = c(0, range(table(data[,idx]))[2]+1)) +
-      geom_bar() +
-      geom_bar(color="black", show.legend = FALSE) +
-      theme_classic(base_size = 25) +
-      theme(legend.text=element_text(size=rel(1))) +
-      xlab(longnames[idx]) +
-      ylab("Number of Participants") +
-      ggtitle(titles[i]) +
-      scale_fill_brewer(name = legend_names[i], na.value="grey",
-                        drop = FALSE, palette = palette[i]) +
-      scale_x_discrete(drop=FALSE)
-    ggsave(paste0("dataplot_", idx, "_", longnames[idx], ".png"),
-           width = 10, height = 7, dpi = 300)
-    
-    df<-data.frame(table(data[,idx]))
-    df <- df %>%  mutate(prop = Freq / sum(Freq) * 100)
-    df <- df %>%  mutate(prop_perc = percent(prop/100))
-    df <- df %>%  arrange(desc(Var1)) %>% mutate(ypos = cumsum(prop) - 0.5*prop)
-    ggplot(df, aes(x="",y=prop,fill=Var1)) +
-      geom_bar(width = 1, stat="identity", color = "white", size = 3) +
-      coord_polar("y", start=0) +
-      theme_void(base_size = 25) +
-      theme(legend.text=element_text(size=rel(1))) +
-      geom_text(aes(y = ypos, label = prop_perc), color = "black", size = 10) +
-      xlab(longnames[idx]) +
-      ylab("Number of Participants") +
-      ggtitle(titles[i]) +
-      scale_fill_brewer(name = legend_names[i], na.value="grey",
-                        drop = FALSE, palette = palette[i])
-    ggsave(paste0("piechart_", idx, "_", longnames[idx], ".png"),
-           width = 10, height = 7, dpi = 300)
-  }
-}
-
-
+#plots two factors against each other normalizing the columns
 plot_dependent_bar_fill <- function(data, i, j, legend_name, palette, ...){
   if(palette == "Viridis"){
     ggplot(data) +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "fill") +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "fill", color="black", show.legend = FALSE) +
-      theme_classic(base_size = 18) +
+      theme_classic(base_size = img_size) +
       labs(...) +
+      theme(legend.text=element_text(size=rel(1))) +
+      scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
       scale_fill_viridis_d(name=legend_name, na.value="grey", drop = FALSE)
   } else {
     ggplot(data) +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "fill") +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "fill", color="black", show.legend = FALSE) +
-      theme_classic(base_size = 18) +
+      theme_classic(base_size = img_size) +
+      theme(legend.text=element_text(size=rel(1))) +
       labs(...) +
+      scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1), expand=c(0,0)) +
       scale_fill_brewer(palette = palette, name=legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("testplot_", i, "_", j, "_fill.png"), width = 10, height = 7, dpi = 300)
+  ggsave(paste0(img_path, "testplot_", i, "_", j, "_fill.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
+#plots two factors against each other stacking the columns
 plot_dependent_bar_stack <- function(data, i, j, legend_name, palette, ...){
   if(palette == "Viridis") {
     ggplot(data) +
       scale_y_continuous(expand = c(0,0), limits = c(0, range(table(data[,i]))[2]+1)) +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "stack") +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "stack", color="black", show.legend = FALSE) +
-      theme_classic(base_size = 18) +
+      theme_classic(base_size = img_size) +
       labs(...) +
       scale_fill_viridis_d(name = legend_name, na.value="grey", drop = FALSE)
   } else {
@@ -279,14 +286,14 @@ plot_dependent_bar_stack <- function(data, i, j, legend_name, palette, ...){
       scale_y_continuous(expand = c(0,0), limits = c(0, range(table(data[,i]))[2]+1)) +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "stack") +
       geom_bar(aes(x=data[,i], fill=data[,j]), position = "stack", color="black", show.legend = FALSE) +
-      theme_classic(base_size = 18) +
+      theme_classic(base_size = img_size) +
       labs(...) +
       scale_fill_brewer(palette = palette, name = legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("testplot_", i, "_", j, "_stack.png"), width = 10, height = 7, dpi = 300)
+  ggsave(paste0(img_path, "testplot_", i, "_", j, "_stack.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
-  
 
+#produces a boxplot
 plot_dependent_box <- function(data1, data2, i, j, legend_name, palette, ...){
   df<-data.frame(data1[,i])
   df <- df %>%  mutate(d2 = data2[,j])
@@ -294,14 +301,41 @@ plot_dependent_box <- function(data1, data2, i, j, legend_name, palette, ...){
     scale_y_continuous(expand = c(0,0), limits = c(0,5.5)) +
     geom_boxplot(outlier.colour="red", outlier.shape=8, outlier.size=4, aes(fill=df[,1])) +
     geom_jitter(shape=16, width = 0.15, height = 0.05, size = 2) +
-    stat_summary(fun.y=mean, geom="point", shape=23, size=4) +
+    stat_summary(fun.y=mean, geom="point", shape=4, size=4) +
     scale_fill_brewer(palette = palette, name = legend_name) +
-    theme_classic(base_size = 25) +
+    theme_classic(base_size = img_size) +
     #theme(legend.position="bottom") +
     theme(legend.text=element_text(size=rel(0.9))) +
     labs(...)
-  ggsave(paste0("testplot_", i, "_", j, ".png"), width = 10, height = 7, dpi = 300)
+  ggsave(paste0(img_path, "boxplot_", i, "_", j, ".png"),
+         width = img_width, height = img_height, dpi = img_dpi)
 }
+
+################################################
+################# Globals ######################
+################################################
+
+longnames <- c("Age Group", "Gender", "App Usage", "Mobile Device Usage", "Drawing Frequency",
+               "Used\nInfoscreen", "Read\nObject Panel", "Motivation",
+               "Text Length\nAppropriateness", "Noticed\nHighlights", "Background\nKnowledge",
+               "Last Question", "Daughter Question", "Name Question",
+               "Enhancment", "Integration", "Would Use Again",
+               "Request for more Digital Apps", "Aspect Combination",
+               "General Difficulty", "Help Usefull", "Color Selection Difficulty",
+               "Drawing Process Difficulty", "Artistic Freedom", "Creativity", "Group",
+               "Technical Aspect", "Artistic Aspect", "Informative Aspect",
+               "Answer Correctness", "Answer Correctness", "Answer Correctness",
+               "Number of correct or better answers",
+               "Integration Score", "Usability Score", "Knowledge Score")
+
+img_size <- 25
+img_linesize <- 2
+img_pointsize <- 7
+img_textsize <- 8
+img_width <- 10
+img_height <- 7
+img_dpi <- 300
+img_path <- "plots/Survey1/"
 
 ################# plots ######################
 #plot basic variables a1, a2, a3, group, q1, q2, q3, q_sum
@@ -329,23 +363,22 @@ palette_general <- c("GnBu", "GnBu")
 plot_simple(data_cut5, indices_general, longnames, titles_general, legend_names_general, palette_general)
 
 #plot aspect frequency
-#überschrift multiple answers possible
 ggplot(data=aspect_data, aes(x=aspect, y=aspect_count, fill=aspect)) +
   scale_y_continuous(expand = c(0,0), limits = c(0, range(aspect_data$aspect_count)[2] + 2)) +
   geom_bar(stat="identity") +
   geom_bar(stat="identity", color="black", show.legend = FALSE) +
-  theme_classic(base_size=25) +
+  theme_classic(base_size=img_size) +
   theme(legend.text=element_text(size=rel(1))) +
   labs(x="Aspect", 
        y="Number of Participants",
        title="Which Aspect of the App is the most intriguing?")+#,
        #subtitle="(multiple answeres were possible)") +
   scale_fill_brewer(name = "Aspect", na.value="grey", palette="Dark2")
-ggsave("dataplot_aspect_data.png", width=10, height=7, dpi=300)
+ggsave(paste0(img_path, "dataplot_aspect_data.png"), width=img_width, height=img_height, dpi=img_dpi)
 
 #plot integration questions
 col_names_vec = c("Enrichment","Integration","Use again", "More digital Apps")
-legend_name = "Integration Feedback"
+legend_name = "Integration\nFeedback"
 x="Answers to Integration Questions"
 y="Number of Participants"
 title="Summary of all Questions regarding Integration"
@@ -360,7 +393,7 @@ plot_multiple(data = integration_data, col_names_vec, "dataplot_integration_ques
 
 #plot usability questions
 col_names_vec = c("Operation","Help","Color\nSelection", "Tools", "Artistic\nfreedom", "Creativity")
-legend_name = "Usability Feedback"
+legend_name = "Usability\nFeedback"
 x="Answers to Usability Questions"
 y="Number of Participants"
 title="Summary of all Questions regarding Usability"
@@ -374,7 +407,7 @@ plot_multiple(data = usability_data, col_names_vec, "dataplot_usability_question
               legend_name, c(1,4,3,5,2,6,7), x=x, y=y, title=title)
 
 #plot historic questions
-legend_name = "Question Correctness"
+legend_name = "Question\nCorrectness"
 x="Answers to Historic Questions"
 y="Number of Participants"
 title="Summary of all Historic Questions"
@@ -406,7 +439,7 @@ cor.test(data_num$a4,data_num$score_u, method = "kendall", use = "pair")
 cor.test(data_num$a4,data_num$score_k, method = "spearman", use = "pair")
 testcor <- cor(data_num, method = "kendall", use = "pair")
 corp <- cor.mtest(testcor, conf.level=0.99)
-png("corrplot.png", width=3000, height=3000, pointsize=90)
+png(paste0(img_path, "corrplot.png"), width=3000, height=3000, pointsize=90)
 corrplot(testcor, p.mat=corp$p, method="color", type="upper", addgrid.col = "black",
          insig="blank", title="Correlation between the numerical variables",
          tl.col="black", diag=FALSE, mar=c(0,0,1,0), cl.pos = "n",
@@ -442,15 +475,6 @@ for (i in 1:length(idx_a)){
 }
 
 #plot factor vs score 
-idx_a <- c(1,1,1,4,4,4,5,5,5,11,11)
-idx_b <- c(34,35,36,34,35,36,34,35,36,34,35)
-
-for (i in 1:length(idx_a)){
-  plot_dependent_box(data_cut5, idx_a[i], idx_b[i], longnames[idx_b[i]],
-                     x = longnames[idx_a[i]], y = longnames[idx_b[i]],
-                     title = paste0(longnames[idx_a[i]], "\nvs. ", longnames[idx_b[i]]))
-}
-
 plot_dependent_box(data1=data_cut5, data2=data_num, i=1, j=18, legend_name=longnames[24],
                    palette = "Oranges", x=longnames[1],y=longnames[24],
                    title="Correlation of age and artistic fulfillment",

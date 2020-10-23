@@ -120,7 +120,7 @@ plot_simple <- function(data, indices, longnames, titles, legend_names, palette)
       scale_fill_brewer(name = legend_names[i], na.value="grey",
                         drop = FALSE, palette = palette[i]) +
       scale_x_discrete(drop=FALSE)
-    ggsave(paste0("plots/Survey2/dataplot_", idx, "_", longnames[idx], ".png"),
+    ggsave(paste0(img_path, "dataplot_", idx, "_", longnames[idx], ".png"),
            width = img_width, height = img_height, dpi = img_dpi)
     
     #pie chart
@@ -140,7 +140,7 @@ plot_simple <- function(data, indices, longnames, titles, legend_names, palette)
       ggtitle(titles[i]) +
       scale_fill_brewer(name = legend_names[i], na.value="grey",
                         drop = FALSE, palette = palette[i])
-    ggsave(paste0("plots/Survey2/piechart_", idx, "_", longnames[idx], ".png"),
+    ggsave(paste0(img_path, "piechart_", idx, "_", longnames[idx], ".png"),
            width = img_width, height = img_height, dpi = img_dpi)
   }
 }
@@ -166,7 +166,7 @@ plot_multiple <- function(data, col_names_vec, filename, legend_name, sort_vec, 
     labs(...) +
     theme(legend.text=element_text(size=rel(1))) +
     scale_fill_viridis_d(na.value="grey", name=legend_name)
-  ggsave(paste0("plots/Survey2/", filename, ".png"),
+  ggsave(paste0(img_path, filename, ".png"),
          width=img_width, height=img_height, dpi=img_dpi)
 }
 
@@ -191,7 +191,7 @@ plot_dependent_bar_fill <- function(data, i, j, legend_name, palette, ...){
       scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1), expand=c(0,0)) +
       scale_fill_brewer(palette = palette, name=legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("plots/Survey2/testplot_", i, "_", j, "_fill.png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0(img_path, "testplot_", i, "_", j, "_fill.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #plots two factors against each other stacking the columns
@@ -213,7 +213,7 @@ plot_dependent_bar_stack <- function(data, i, j, legend_name, palette, ...){
       labs(...) +
       scale_fill_brewer(palette = palette, name = legend_name, na.value="grey", drop = FALSE)
   }
-  ggsave(paste0("plots/Survey2/testplot_", i, "_", j, "_stack.png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0(img_path, "testplot_", i, "_", j, "_stack.png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #produces a boxplot
@@ -228,7 +228,7 @@ plot_dependent_box <- function(data, i, j, palette, legend_name, ...){
     #theme(legend.position="bottom") +
     theme(legend.text=element_text(size=rel(0.9))) +
     labs(...)
-  ggsave(paste0("plots/Survey2/boxplot_", i, "_", j, ".png"), width = img_width, height = img_height, dpi = img_dpi)
+  ggsave(paste0(img_path, "boxplot_", i, "_", j, ".png"), width = img_width, height = img_height, dpi = img_dpi)
 }
 
 #returns a jitterplot which can be used as a base for other plots
@@ -249,7 +249,7 @@ plot_regression <- function(baseplot, model, filename, ...){
     scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+  ggsave(plot = g, filename = paste0(img_path, filename, ".png"),
          width=img_width, height=img_height, dpi=img_dpi)
   return(g)
 }
@@ -280,7 +280,7 @@ plot_regression_multiple <- function(model1, model2, model3, filename, title, ..
   
   ar <- ggarrange(plot1, plot2, plot3, common.legend = TRUE, legend = "bottom", ncol=3)
   ar <- annotate_figure(ar, top = text_grob(title, size=15))
-  ggsave(plot = ar, filename = paste0("plots/Survey2/", filename, ".png"),
+  ggsave(plot = ar, filename = paste0(img_path, filename, ".png"),
          width=11, height=4, dpi=300)
 }
 
@@ -300,7 +300,7 @@ plot_regression_confidence <- function(baseplot, newdata, model, filename, ...){
     scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05)) 
-  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+  ggsave(plot = g, filename = paste0(img_path, filename, ".png"),
          width=img_width, height=img_height, dpi=img_dpi)
 }
 
@@ -329,7 +329,7 @@ plot_regression_boot <- function(baseplot, boot_model, levelnames, filename,
     scale_y_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     scale_x_continuous(labels=scales::percent_format(accuracy = 1), breaks = c(0, 0.25, 0.5, 0.75, 1)) +
     coord_cartesian(ylim = c(-0.05, 1.05), xlim = c(-0.05, 1.05))
-  ggsave(plot = g, filename = paste0("plots/Survey2/", filename, ".png"),
+  ggsave(plot = g, filename = paste0(img_path, filename, ".png"),
          width=img_width, height=img_height, dpi=img_dpi)
 }
 
@@ -346,6 +346,7 @@ img_textsize <- 8
 img_width <- 10
 img_height <- 7
 img_dpi <- 300
+img_path <- "plots/Survey2/"
 
 ##############################################
 ################# Plots ######################
