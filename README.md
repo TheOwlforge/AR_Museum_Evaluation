@@ -5,7 +5,7 @@ This repository contains R code used to evaluate an [interactive museum applicat
 The analysis features Quantile Regression and Generalized Additive Models, as well as Bootstrapping next to traditional statistical testing. Most plots were produced using the library ggplot2.
 
 ## Featured results 
-(more can be found in the plots folder)
+(more images can be found in the plots folder)
 
 ### Comparative Study on Knowledge Transfer
 <p align="center">
