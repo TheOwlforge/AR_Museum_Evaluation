@@ -8,9 +8,14 @@ The analysis features Quantile Regression and Generalized Additive Models, as we
 (more can be found in the plots folder)
 
 <p align="center">
-  <img src="plots/Survey1/dataplot_usability_questions_cut5.png" width="800" title="Usability">
-</p>
-<p align="center">
   <img src="plots/Survey2/gam_reg_CI.png" width="400" title="GAM">
   <img src="plots/Survey2/gam_boot.png" width="400" title="Bootstrapped GAM">
+</p>
+<p align="center">
+  <img src="plots/Survey1/dataplot_1_Age Group.png" width="400" title="Age">
+  <img src="plots/Survey1/dataplot_usability_questions_cut5.png" width="500" title="Usability">
+</p>
+<p align="center">
+  <img src="plots/Survey1/piechart_5_Drawing Frequency.png" width="400" title="Age">
+  <img src="plots/Survey1/corrplot.png" width="400" title="Usability">
 </p>
